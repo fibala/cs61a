@@ -63,7 +63,7 @@ def t():
 	return 1
 def f():
     "*** YOUR CODE HERE ***"
-	return print(t())
+	return print(t()+1)
 	
 # Q4.
 

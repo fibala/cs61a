@@ -22,9 +22,9 @@ def roll_dice(num_rolls, dice=six_sided_dice, who='Boss Hogg', ones_lose=True):
     turn_score = 0
     for i in range(0,num_rolls):
         single_outcome = dice()
-        if commentary: print ("this single roll is: " , single_outcome)
+        if commentary: announce(single_outcome,who) 
         if single_outcome==1 and ones_lose:
-            if commentary: print ("the total score of this roll is 1")
+            if commentary: print ("the total score of this roll is: 1")
             return 1
         else:
             turn_score += single_outcome
@@ -121,7 +121,7 @@ def draw_number(n, dot='*'):
      -------
     """
     "*** YOUR CODE HERE ***"
-    return '' # replace this line
+    return draw_dice(n%2==1,n>1,n>3,n>5,dot)
 
 def draw_dice(c, f, b, s, dot):
     """Return an ASCII art representation of a die roll.
@@ -172,6 +172,10 @@ def num_allowed_dice(score, opponent_score):
     1
     """
     "*** YOUR CODE HERE ***"
+    if (score + opponent_score) % 10 == 7:
+        return 1
+    else:
+        return 10
 
 def select_dice(score, opponent_score):
     """Select 6-sided dice unless the sum of scores is a multiple of 7.
@@ -182,6 +186,10 @@ def select_dice(score, opponent_score):
     True
     """
     "*** YOUR CODE HERE ***"
+    if (score + opponent_score) % 7 == 0:
+        return four_sided_dice
+    else:
+        return six_sided_dice
 
 def other(who):
     """Return the other player, for players numbered 0 or 1.
@@ -216,6 +224,14 @@ def play(strategy0, strategy1):
     """
     who = 0 # Which player is about to take a turn, 0 (first) or 1 (second)
     "*** YOUR CODE HERE ***"
+    score0,score1=0,0
+    while score0 < goal and score1 < goal:
+        strategy_allowed=min(strategy0(score0,score1),num_allowed_dice(score0,score1))
+        score0 += take_turn(strategy_allowed,score1,select_dice(score0,score1),score0!=49)
+        who = other(who)
+        score0, score1 = score1, score0
+        strategy0, strategy1 = strategy1, strategy0
+    who=other(who)
     return who
 
 

@@ -280,6 +280,12 @@ def make_average(fn, num_samples=100):
     Thus, the average value is 6.0.
     """
     "*** YOUR CODE HERE ***"
+    def average_fn(*args):
+        count=0
+        for i in range(0,num_samples):
+            count += fn(*args)
+        return count/num_samples
+    return average_fn
 
 def compare_strategies(strategy, baseline=always_roll(5)):
     """Return the average win rate (out of 1) of STRATEGY against BASELINE."""

@@ -317,11 +317,11 @@ def run_experiments():
     result = eval_strategy_range(always_roll, 1, 10)
     print('Best always_roll strategy:', result)
 
-    if False: # Change to True when ready to test make_comeback_strategy
+    if True: # Change to True when ready to test make_comeback_strategy
         result = eval_strategy_range(make_comeback_strategy, 5, 15)
         print('Best comeback strategy:', result)
 
-    if False: # Change to True when ready to test make_mean_strategy
+    if True: # Change to True when ready to test make_mean_strategy
         result = eval_strategy_range(make_mean_strategy, 1, 10)
         print('Best mean strategy:', result)
 
@@ -333,12 +333,28 @@ def run_experiments():
 def make_comeback_strategy(margin, num_rolls=5):
     """Return a strategy that rolls one extra time when losing by MARGIN."""
     "*** YOUR CODE HERE ***"
-    return always_roll(num_rolls)  # Replace this call
+    def comeback_strategy(score, opponent_score):
+        if opponent_score - score >= margin:
+            return num_rolls + 1
+        else:
+            return num_rolls
+    return comeback_strategy  # Replace this call
 
 def make_mean_strategy(min_points, num_rolls=5):
     """Return a strategy that attempts to give the opponent problems."""
     "*** YOUR CODE HERE ***"
-    return always_roll(num_rolls)  # Replace this call
+    def mean_strategy(score, opponents_score):
+        free_bacon = opponents_score // 10
+        if free_bacon % 6 == 0:
+            free_bacon += free_bacon // 6
+        if free_bacon == 0:
+            free_bacon = 1
+        if free_bacon >= min_points:
+            test_score = score + opponents_score + free_bacon
+            if test_score % 7 == 0 or test_score % 10 == 7:
+                return 0
+        return num_rolls
+    return mean_strategy  # Replace this call
 
 def final_strategy(score, opponent_score):
     """Write a brief description of your final strategy.
@@ -346,6 +362,8 @@ def final_strategy(score, opponent_score):
     *** YOUR DESCRIPTION HERE ***
     """
     "*** YOUR CODE HERE ***"
+    return 1
+
 
 def final_strategy_test():
     """Compares final strategy to the baseline strategy."""

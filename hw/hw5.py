@@ -28,6 +28,11 @@ def reverse_rlist_iterative(s):
     (7, (5, (3, (2, None))))
     """
     "*** YOUR CODE HERE ***"
+    new_rlist=(first(s),empty_rlist)
+    while rest(s) != empty_rlist:
+        s=rest(s)
+        new_rlist=rlist(first(s),new_rlist)
+    return new_rlist
 
 def reverse_rlist_recursive(s):
     """Return a reversed version of a recursive list s.
@@ -37,7 +42,15 @@ def reverse_rlist_recursive(s):
     (7, (5, (3, (2, None))))
     """
     "*** YOUR CODE HERE ***"
-
+    def helper(s, new_rlist):
+        if rest(s) == empty_rlist:
+            new_rlist = rlist(first(s), new_rlist)
+            return new_rlist
+        else: 
+            new_rlist = rlist(first(s), new_rlist)
+            return helper(rest(s), new_rlist)
+    return helper(s, empty_rlist)
+    
 # Q2.
 
 def interleave_recursive(s0, s1):
@@ -54,6 +67,21 @@ def interleave_recursive(s0, s1):
     (1, (1, (3, (3, None))))
     """
     "*** YOUR CODE HERE ***"
+    def join(list1,list2):
+        list1=reverse_rlist_recursive(list1)
+        while list1 != empty_rlist:
+            list1,list2=rest(list1),rlist(first(list1),list2)
+        return list2
+        
+    def helper(s0,s1,new_rlist):
+        if s0 == empty_rlist:
+            return join(new_rlist,s1)
+        if s1 == empty_rlist:
+            return join(new_rlist,s0)
+        new_rlist=join(new_rlist,rlist(s0[0],empty_rlist))
+        new_rlist=join(new_rlist,rlist(s1[0],empty_rlist))
+        return helper(rest(s0),rest(s1),new_rlist)
+    return helper(rest(s0), rest(s1), rlist(s0[0], rlist(s1[0], empty_rlist)))
 
 def interleave_iterative(s0, s1):
     """Interleave recursive lists s0 and s1 to produce a new recursive
@@ -69,7 +97,27 @@ def interleave_iterative(s0, s1):
     (1, (1, (3, (3, None))))
     """
     "*** YOUR CODE HERE ***"
-
+    def join(list1,list2):
+        list1=reverse_rlist_iterative(list1)
+        while list1 != empty_rlist:
+            list1,list2=rest(list1),rlist(first(list1),list2)
+        return list2
+    new_rlist=join(rlist(s0[0],empty_rlist),rlist(s1[0],empty_rlist))
+    print(new_rlist)
+    s0=rest(s0)
+    s1=rest(s1)  
+    while s0 != empty_rlist and s1 != empty_rlist:        
+        new_rlist=join(new_rlist,rlist(s0[0],empty_rlist))
+        new_rlist=join(new_rlist,rlist(s1[0],empty_rlist))
+        print(new_rlist,'ccc',s0,s1)
+        s0=rest(s0)
+        s1=rest(s1)
+        print (s0,'aaa',s1,'bbb')
+    if s0 != empty_rlist:
+        new_rlist=join(new_rlist,s0)
+    if s1 != empty_rlist:
+        new_rlist=join(new_rlist,s1)
+    return new_rlist
 
 def str_interval(x):
     """Return a string representation of interval x.
@@ -109,14 +157,17 @@ def mul_interval(x, y):
 def interval(a, b):
     """Construct an interval from a to b."""
     "*** YOUR CODE HERE ***"
+    return (a,b)
 
 def lower_bound(x):
     """Return the lower bound of interval x."""
     "*** YOUR CODE HERE ***"
+    return x[0]
 
 def upper_bound(x):
     """Return the upper bound of interval x."""
     "*** YOUR CODE HERE ***"
+    return x[1]
 
 # Q4.
 
@@ -130,6 +181,7 @@ def div_interval(x, y):
     '-0.25 to 0.5'
     """
     "*** YOUR CODE HERE ***"
+    assert (lower_bound(y)>0 or upper_bound(y)<0),"interval that spans zero"
     reciprocal_y = interval(1/upper_bound(y), 1/lower_bound(y))
     return mul_interval(x, reciprocal_y)
 
@@ -143,6 +195,8 @@ def sub_interval(x, y):
     '-9 to -2'
     """
     "*** YOUR CODE HERE ***"
+    opposite_y=interval(-upper_bound(y),-lower_bound(y))
+    return add_interval(x,opposite_y)
 
 # Q6.
 
@@ -166,6 +220,7 @@ def make_center_percent(c, p):
     '1.0 to 3.0'
     """
     "*** YOUR CODE HERE ***"
+    return make_center_width(c,abs(c*p/100))
 
 def percent(x):
     """Return the percentage tolerance of interval x.
@@ -174,6 +229,8 @@ def percent(x):
     50.0
     """
     "*** YOUR CODE HERE ***"
+    upper,lower=upper_bound(x),lower_bound(x)
+    return abs((upper-lower)/(upper+lower))*100
 
 # Q7.
 
@@ -192,7 +249,17 @@ def quadratic(x, a, b, c):
     '-6 to 16'
     """
     "*** YOUR CODE HERE ***"
-
+    tt=mul_interval(x,x)
+    lower_tt=min(a*lower_bound(tt),a*upper_bound(tt))
+    upper_tt=max(a*lower_bound(tt),a*upper_bound(tt))
+    att=interval(lower_tt,upper_tt)
+    lower_t=min(b*lower_bound(x),b*upper_bound(x))
+    upper_t=max(b*lower_bound(x),b*upper_bound(x))
+    bt=interval(lower_t,upper_t)
+    attbt=add_interval(att,bt)
+    fx=interval(lower_bound(attbt)+c,upper_bound(attbt)+c)
+    return fx
+    
 # Q8.
 
 def par1(r1, r2):
@@ -207,7 +274,11 @@ def par2(r1, r2):
 
 # These two intervals give different results for parallel resistors:
 "*** YOUR CODE HERE ***"
-
+r1 = interval(1,4)
+r2 = interval(2,5)
+par1(r1,r2)
+par2(r1,r2)
+    
 # Q9.
 
 def multiple_reference_explanation():
@@ -225,5 +296,15 @@ def accurate_quadratic(x, a, b, c):
     '0 to 10'
     """
     "*** YOUR CODE HERE ***"
+    def f(x):
+        return a*x*x+b*x+c
+    extreme_point=-b/(2*a)
+    if extreme_point <= lower_bound(x) or extreme_point >= upper_bound(x):
+        max_x=max(f(upper_bound(x)),f(lower_bound(x)))
+        min_x=min(f(upper_bound(x)),f(lower_bound(x)))
+    else:
+        max_x=max(f(upper_bound(x)),f(lower_bound(x)),f(extreme_point))
+        min_x=min(f(upper_bound(x)),f(lower_bound(x)),f(extreme_point))       
+    return interval(min_x,max_x)
 
 

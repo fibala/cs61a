@@ -11,8 +11,8 @@ def divide_by_fact(dividend, n):
     5.0
     """
     if n < 0:
-    	return dividend
-     return divide_by_fact(dividend / n, n - 1)
+        return dividend
+    return divide_by_fact(dividend / n, n - 1)
 
 # Q2.
 
@@ -29,7 +29,21 @@ def group(seq):
     num = len(seq)
     assert num >= 12
     "*** YOUR CODE HERE ***"
-
+    newgroup=[]
+    while num>15:
+        newgroup.append(seq[0:4])
+        seq=seq[4:]
+        num-=4
+    if num==12: temp=(4,4,4)
+    if num==13: temp=(4,4,5)
+    if num==14: temp=(4,5,5)
+    if num==15: temp=(5,5,5)
+    for i in temp:
+        newgroup.append(seq[0:i])
+        seq=seq[i:]
+        num-=i
+    return tuple(newgroup)
+    
 
 """
 
@@ -65,6 +79,9 @@ def partial_reverse(lst, start):
     [1, 2, 7, 6, 5, 3, 4]
     """
     "*** YOUR CODE HERE ***"
+    for i in lst[start:]:
+        lst.insert(start,i)
+        lst.pop()
 
 # Q4.
 
@@ -78,6 +95,13 @@ def index_largest(seq):
     """
     assert len(seq) > 0
     "*** YOUR CODE HERE ***"
+    temp,num=seq[0],0
+    for i in range(1,len(seq)):
+        if seq[i]>temp:
+            temp=seq[i]
+            num=i
+    return num
+        
 
 # Q5.
 
@@ -91,6 +115,42 @@ def pizza_sort(lst):
     [9, 8, 7, 5, 3, 2, 1]
     """
     "*** YOUR CODE HERE ***"
+    length=len(lst)
+    def helper(lst,first=0):
+        if first==length-1:
+            return
+        largest=index_largest(lst[first:])+first
+        lst[largest],lst[first]=lst[first],lst[largest]
+        helper(lst,first+1)
+    return helper(lst)    
+        
+def merge_sort(lst):
+    if len(lst)<=1:
+        return lst
+    half=len(lst)//2
+    left=pizza_sort(lst[:half])
+    right=pizza_sort(lst[half:])
+    print ('cc',lst)
+    merge(left,right)
+def merge(left,right):
+    result=[]
+    while len(left)>0 or len(right)>0:
+        if len(left)>0 and len(right)>0:
+            if left[0]>=right[0]:
+                result.append(left[0])
+                left=left[1:]
+            else:
+                result.append(right[0])
+                right=right[1:]
+        elif len(left)>0:
+            result.append(left[0])
+            left=left[1:]
+        elif len(right)>0:
+            result.append(right[0])
+            right=right[1:]
+    print (result)
+    return result
+
 
 # Q6.
 

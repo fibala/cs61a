@@ -22,7 +22,8 @@ def construct_sent(word, table):
     result = ' '
     while word not in ['.', '!', '?']:
         "** FILL THIS IN**"
-
+        result += word + ' '
+        word=random.choice(table[word])
     return result + word
 
 def shakespeare_tokens(path = 'shakespeare.txt', url = 'http://inst.eecs.berkeley.edu/~cs61a/fa11/shakespeare.txt'):

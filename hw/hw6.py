@@ -175,6 +175,14 @@ def make_accumulator():
     29
     """
     "*** YOUR CODE HERE ***"
+    sum_n=[]
+    def accumulator(n):
+        sum_n.append(n)
+        all=0
+        for i in sum_n:
+            all+=i
+        return all
+    return accumulator
 
 
 # Q7.
@@ -200,6 +208,12 @@ def make_accumulator_nonlocal():
     29
     """
     "*** YOUR CODE HERE ***"
+    sum_n=0
+    def accumulator(n):
+        nonlocal sum_n
+        sum_n+=n
+        return sum_n
+    return accumulator
 
 
 # Q8.
@@ -222,5 +236,4 @@ def make_count_change():
     59576
     """
     "*** YOUR CODE HERE ***"
-
 

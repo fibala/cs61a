@@ -33,14 +33,17 @@ def make_tweet(text, time, lat, lon):
 def tweet_words(tweet):
     """Return a list of the words in the text of a tweet."""
     "*** YOUR CODE HERE ***"
+    return extract_words(tweet['text'])
 
 def tweet_time(tweet):
     """Return the datetime that represents when the tweet was posted."""
     "*** YOUR CODE HERE ***"
+    return tweet['time']
 
 def tweet_location(tweet):
     """Return a position (see geo.py) that represents the tweet's location."""
     "*** YOUR CODE HERE ***"
+    return make_position(tweet['latitude'],tweet['longitude'])
 
 def tweet_string(tweet):
     """Return a string representing the tweet."""
@@ -59,7 +62,14 @@ def extract_words(text):
     ['paperclips', 'they', 're', 'so', 'awesome', 'cool', 'useful']
     """
     "*** YOUR CODE HERE ***"
-    return text.split()  # Replace
+    #"return text.split()  # Replace
+    text_final=''
+    for i in text:
+        if i in ascii_letters:
+            text_final += i
+        else:
+            text_final += ' '
+    return text_final.split()
 
 def make_sentiment(value):
     """Return a sentiment, which represents a value that may not exist.
@@ -75,16 +85,19 @@ def make_sentiment(value):
     """
     assert value is None or (value >= -1 and value <= 1), 'Illegal value'
     "*** YOUR CODE HERE ***"
+    return value
 
 def has_sentiment(s):
     """Return whether sentiment s has a value."""
     "*** YOUR CODE HERE ***"
+    return s != None
 
 def sentiment_value(s):
     """Return the value of a sentiment s."""
     assert has_sentiment(s), 'No sentiment value'
     "*** YOUR CODE HERE ***"
-
+    return s
+    
 def get_word_sentiment(word):
     """Return a sentiment representing the degree of positive or negative
     feeling in the given word.
@@ -120,6 +133,14 @@ def analyze_tweet_sentiment(tweet):
     """
     average = make_sentiment(None)
     "*** YOUR CODE HERE ***"
+    word_in=[]
+    word_score=0
+    for i in tweet_words(tweet):
+        if has_sentiment(get_word_sentiment(i)):
+            word_in.append(i)
+            word_score += sentiment_value(get_word_sentiment(i))
+    if len(word_in) != 0:
+        average = word_score / len(word_in)
     return average
 
 

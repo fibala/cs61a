@@ -169,6 +169,25 @@ def find_centroid(polygon):
     (1.0, 2.0, 0.0)
     """
     "*** YOUR CODE HERE ***"
+    n=len(polygon)-1
+    x_vertice=[]
+    y_vertice=[]
+    for i in range(0,n+1):
+        x_vertice.append(polygon[i][0])
+        y_vertice.append(polygon[i][1])
+    A=0
+    for i in range(0,n):
+        A+=x_vertice[i]*y_vertice[i+1]-x_vertice[i+1]*y_vertice[i]
+    A=1/2*A
+    if A==0:
+        return (polygon[0][0],polygon[0][1],0)
+    cx,cy=0,0
+    for i in range(0,n):
+        cx+=(x_vertice[i]+x_vertice[i+1])*(x_vertice[i]*y_vertice[i+1]-x_vertice[i+1]*y_vertice[i])
+        cy+=(y_vertice[i]+y_vertice[i+1])*(x_vertice[i]*y_vertice[i+1]-x_vertice[i+1]*y_vertice[i])
+    cx=cx/(6*A)
+    cy=cy/(6*A)
+    return (cx,cy,A)
 
 def find_center(polygons):
     """Compute the geographic center of a state, averaged over its polygons.
@@ -192,7 +211,14 @@ def find_center(polygons):
     -156.21763
     """
     "*** YOUR CODE HERE ***"
-
+    total_A,cx,cy=0,0,0
+    for polygon in polygons:
+        total_A+=find_centroid(polygon)[2]
+        cx+=find_centroid(polygon)[0]*find_centroid(polygon)[2]
+        cy+=find_centroid(polygon)[1]*find_centroid(polygon)[2]
+    cx=cx/total_A
+    cy=cy/total_A
+    return (cx,cy)
 
 # Phase 3: The Mood of the Nation
 
@@ -215,7 +241,13 @@ def find_closest_state(tweet, state_centers):
     'NJ'
     """
     "*** YOUR CODE HERE ***"
-
+    location=tweet_location(tweet)
+    distances={name: geo_distance(location,us_centers[name]) for name in state_centers.keys()}
+    min_distance=min(distances.values())
+    for name in distances.keys():
+        if distances[name]== min_distance:
+            return name
+    
 def group_tweets_by_state(tweets):
     """Return a dictionary that aggregates tweets by their nearest state center.
 

@@ -242,7 +242,7 @@ def find_closest_state(tweet, state_centers):
     """
     "*** YOUR CODE HERE ***"
     location=tweet_location(tweet)
-    distances={name: geo_distance(location,us_centers[name]) for name in state_centers.keys()}
+    distances={name: geo_distance(location,state_centers[name]) for name in state_centers.keys()}
     min_distance=min(distances.values())
     for name in distances.keys():
         if distances[name]== min_distance:
@@ -264,6 +264,11 @@ def group_tweets_by_state(tweets):
     """
     tweets_by_state = {}
     "*** YOUR CODE HERE ***"
+    us_centers = {n: find_center(s) for n, s in us_states.items()}
+    us_list = [find_closest_state(tweet, us_centers) for tweet in tweets]
+    list_of_tweet_from = lambda state_name: [tweet for tweet in tweets  if find_closest_state(tweet, us_centers)==state_name] 
+    tweets_by_state = {state: list_of_tweet_from(state)  for state in set(us_list)}
+    
     return tweets_by_state
 
 def most_talkative_state(term):
@@ -276,6 +281,11 @@ def most_talkative_state(term):
     """
     tweets = load_tweets(make_tweet, term)  # A list of tweets containing term
     "*** YOUR CODE HERE ***"
+    group_tweets=group_tweets_by_state(tweets)
+    most_num=max(len(group_tweets[tweet]) for tweet in group_tweets)
+    for tweet in group_tweets:
+        if len(group_tweets[tweet]) == most_num:
+            return tweet
 
 def average_sentiments(tweets_by_state):
     """Calculate the average sentiment of the states by averaging over all

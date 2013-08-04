@@ -301,8 +301,16 @@ def average_sentiments(tweets_by_state):
     """
     averaged_state_sentiments = {}
     "*** YOUR CODE HERE ***"
+    for state in tweets_by_state.keys():
+        value,number=0,0
+        for tweet in tweets_by_state[state]:
+            if has_sentiment(analyze_tweet_sentiment(tweet)):
+                value+=analyze_tweet_sentiment(tweet)
+                number+=1
+        if number !=0:
+            ave_value=value/number
+            averaged_state_sentiments[state]=ave_value
     return averaged_state_sentiments
-
 
 # Phase 4: Into the Fourth Dimension
 
@@ -359,8 +367,10 @@ def group_tweets_by_hour(tweets):
     """
     tweets_by_hour = {}
     "*** YOUR CODE HERE ***"
+    for tweet in tweets:
+        tweets_by_hour.setdefault(tweet['time'].hour,[]).append(tweet)
     return tweets_by_hour
-
+    
 
 # Interaction.  You don't need to read this section of the program.
 

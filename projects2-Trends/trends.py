@@ -369,8 +369,9 @@ def group_tweets_by_hour(tweets):
     "*** YOUR CODE HERE ***"
     for tweet in tweets:
         tweets_by_hour.setdefault(tweet['time'].hour,[]).append(tweet)
+        #useage of setdefault method for dictionaries. (Build-in types)
     return tweets_by_hour
-    
+    #others may useful: class collections, method - Counter,defaultdict
 
 # Interaction.  You don't need to read this section of the program.
 

@@ -114,6 +114,37 @@ class VendingMachine(object):
     'Machine is out of stock. Here is your $15.'
     """
     "*** YOUR CODE HERE ***"
+    def __init__(self,product,price):
+        self.product=product
+        self.price=price
+        self.stock=0
+        self.deposition=0
+        
+    def vend(self):
+        if self.stock==0:
+            return "Machine is out of stock."
+            
+        if self.deposition<self.price:
+            return "You must deposit $"+str(self.price-self.deposition)+" more."
+        else:
+            change=self.deposition-self.price
+            self.stock-=1
+            self.deposition=0
+            if change==0:
+                return "Here is your crab."
+            else:
+                return "Here is your crab and $" + str(change)+" change." 
+
+    def deposit(self,money):
+        if self.stock==0:
+            return "Machine is out of stock. Here is your $"+str(money)+"."
+        else:
+            self.deposition+=money
+            return "Current balance: $" + str(self.deposition)
+    
+    def restock(self,num):
+        self.stock+=num
+        return "Current " + self.product + " stock: " + str(self.stock)
 
 # Q3.
 

@@ -169,6 +169,18 @@ class MissManners(object):
     'Here is your teaspoon and $10 change.'
     """
     "*** YOUR CODE HERE ***"
+    def __init__(self,object):
+        self.object=object
+    
+    def ask(self,*args):
+        say_please=args[0]
+        if say_please[:6]!='please':
+            return "You must learn to say please."
+        else:
+            if not hasattr(self.object,say_please[7:]):
+                return 'Thanks for asking, but I know not how to '+ say_please[7:]
+            else:
+                return getattr(self.object,say_please[7:])(*args[1:])
 
 # Q4.
 
@@ -208,7 +220,26 @@ class Account(object):
         return self.balance
 
 "*** YOUR CODE HERE ***"
-
+class SecureAccount(Account):
+    def __init__(self,account_holder,password):
+        Account.__init__(self,account_holder)
+        self.password=password
+        self.trypassword=0
+        self.locked=False
+        
+    def secure_withdraw():
+        if self.locked==True:
+            return 'This account is locked'
+        if password==password:
+            return Account.withdraw(self,amount)
+        else:
+            self.trypassword+=1
+            if self.trypassword>=3:
+                self.locked=True
+            return 'Incorrect password'
+        
+    def withdraw():
+        return 'This account requires a password to withdraw'
 
 import unittest
 

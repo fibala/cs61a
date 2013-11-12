@@ -72,6 +72,8 @@ class Place(object):
 class Insect(object):
     """An Insect, the base class of Ant and Bee, has armor and a Place."""
 
+    watersafe=False
+
     def __init__(self, armor, place=None):
         """Create an Insect with an armor amount and a starting Place."""
         self.armor = armor
@@ -111,6 +113,7 @@ class Bee(Insect):
     """A Bee moves from place to place, following exits and stinging ants."""
 
     name = 'Bee'
+    watersave=True
 
     def sting(self, ant):
         """Attack an Ant, reducing the Ant's armor by 1."""
@@ -442,6 +445,9 @@ class Water(Place):
         """Add insect if it is watersafe, otherwise reduce its armor to 0."""
         print('added', insect, insect.watersafe)
         "*** YOUR CODE HERE ***"
+        Place.add_insect(self,insect)
+        if not insect.watersafe:
+            insect.reduce_armor(insect.armor)
 
 
 class FireAnt(Ant):
@@ -450,11 +456,22 @@ class FireAnt(Ant):
     name = 'Fire'
     damage = 3
     "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost=4
+    implemented = True
 
     def reduce_armor(self, amount):
         "*** YOUR CODE HERE ***"
-
+        # call Insect.reduce_armor and do not rewrite the phrase in Insect.reduce_armor again.
+        occupy_place=self.place
+        #save the place for Ant, once Insect.reduce_armor is carried out, the original self.place is lost and will call error in the next for statment(for the_bee in occupy_place.bees: AttributeError: 'NoneType' object has no attribute 'bees').
+        #in Insect.reduce_armor(self,amount), the last phrase says "self.place.remove_insect(self)", and Insect.__init__ indicted that 'self.place = place' is set by Place.add_insect and Place.remove_insect. And in Space.remove_insect, "insect.place = None" set insect.place's value is None.
+        #then the error 'NoneType' object. So self.place must be saved by another variable.
+        Insect.reduce_armor(self,amount)
+        if self.armor<=0:
+            for the_bee in occupy_place.bees[:]:
+            #If you need to modify the sequence you are iterating over while inside the loop (for example to duplicate selected items), it is recommended that you first make a copy. Iterating over a sequence does not implicitly make a copy. The slice notation makes this especially convenient.
+                the_bee.reduce_armor(self.damage)
+                
 
 class LongThrower(ThrowerAnt):
     """A ThrowerAnt that only throws leaves at Bees at least 4 places away."""

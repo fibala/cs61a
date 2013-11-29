@@ -551,7 +551,7 @@ class HungryAnt(Ant):
     """
     name = 'Hungry'
     "*** YOUR CODE HERE ***"
-    food_cost=1
+    food_cost=4
     time_to_digest=3
     implemented = True
 

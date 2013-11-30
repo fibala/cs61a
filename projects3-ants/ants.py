@@ -50,12 +50,14 @@ class Place(object):
             "*** YOUR CODE HERE ***"
             if self.ant is None:
                 self.ant = insect
-            elif self.ant.can_contain(insect):
+            elif self.ant.can_contain(insect): #BodyguardAnt is in the place
                 self.ant.contain_ant(insect)
-            elif self.ant.can_contain(self.ant):
-                self.ant = insect
+            elif insect.can_contain(self.ant): #a normal ant is in the place
+                insect.contain_ant(self.ant) 
+                self.ant = insect 
+                #can be interpreted as a normal ant is under BodyguardAnt's shield. the BodyguardAnt must be the place.ant that the bee can touch, when the BodyguardAnt dies(the method BodygardAnt.reduce_armor),the place.ant then be changed to the normal ant.
             else:
-                assert self.ant is None, 'Two ants in {0}'.format(self)
+                raise Exception('Two ants in {0}'.format(self))
         else:
             self.bees.append(insect)
         insect.place = self
@@ -588,10 +590,9 @@ class BodyguardAnt(Ant):
     """BodyguardAnt provides protection to other Ants."""
     name = 'Bodyguard'
     "*** YOUR CODE HERE ***"
-    food_cost=0
-    armor=2
+    food_cost = 4
     implemented = True
-    container=True
+    container = True
 
     def __init__(self):
         Ant.__init__(self, 2)
@@ -603,14 +604,14 @@ class BodyguardAnt(Ant):
 
     def reduce_armor(self, amount):
         "*** YOUR CODE HERE ***"
-        the_place=self.palce
-        Insect.reduce_armor(self.amount)
-        if self.armor<=0:
-            palce.ant=self.ant
+        the_place=self.place
+        Insect.reduce_armor(self, amount)
+        if self.armor <= 0:
+            the_place.ant = self.ant
 
     def action(self, colony):
         "*** YOUR CODE HERE ***"
-        if self.ant is not  None:
+        if self.ant is not None:
             self.ant.action(colony)
 
 

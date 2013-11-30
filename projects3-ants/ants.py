@@ -48,8 +48,14 @@ class Place(object):
         if insect.is_ant():
             # Phase 2: Special handling for BodyguardAnt
             "*** YOUR CODE HERE ***"
-            assert self.ant is None, 'Two ants in {0}'.format(self)
-            self.ant = insect
+            if self.ant is None:
+                self.ant = insect
+            elif self.ant.can_contain(insect):
+                self.ant.contain_ant(insect)
+            elif self.ant.can_contain(self.ant):
+                self.ant = insect
+            else:
+                assert self.ant is None, 'Two ants in {0}'.format(self)
         else:
             self.bees.append(insect)
         insect.place = self
@@ -150,6 +156,7 @@ class Ant(Insect):
     damage = 0
     food_cost = 0
     blocks_path = True
+    container = False
 
     def __init__(self, armor=1):
         """Create an Ant with an armor quantity."""
@@ -157,6 +164,9 @@ class Ant(Insect):
 
     def is_ant(self):
         return True
+        
+    def can_contain(self, other):
+       return (self.container) and (self.ant is None) and (not other.container)
 
 
 class HarvesterAnt(Ant):
@@ -578,7 +588,10 @@ class BodyguardAnt(Ant):
     """BodyguardAnt provides protection to other Ants."""
     name = 'Bodyguard'
     "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost=0
+    armor=2
+    implemented = True
+    container=True
 
     def __init__(self):
         Ant.__init__(self, 2)
@@ -586,12 +599,19 @@ class BodyguardAnt(Ant):
 
     def contain_ant(self, ant):
         "*** YOUR CODE HERE ***"
+        self.ant = ant
 
     def reduce_armor(self, amount):
         "*** YOUR CODE HERE ***"
+        the_place=self.palce
+        Insect.reduce_armor(self.amount)
+        if self.armor<=0:
+            palce.ant=self.ant
 
     def action(self, colony):
         "*** YOUR CODE HERE ***"
+        if self.ant is not  None:
+            self.ant.action(colony)
 
 
 class QueenAnt(ThrowerAnt):

@@ -69,6 +69,8 @@ class Place(object):
         else:
             assert self.ant == insect, '{0} is not in {1}'.format(insect, self)
             "*** YOUR CODE HERE ***"
+            if self.ant.name == 'QueenAnt' and self.ant.impostor_queens > 1:
+                self.bees.remove(self.ant)
             self.ant = None
 
         insect.place = None
@@ -159,6 +161,7 @@ class Ant(Insect):
     food_cost = 0
     blocks_path = True
     container = False
+    double_damage=False
 
     def __init__(self, armor=1):
         """Create an Ant with an armor quantity."""
@@ -620,16 +623,43 @@ class QueenAnt(ThrowerAnt):
 
     name = 'Queen'
     "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost = 2
+    watersafe =True
+    implemented = True
+    impostor_queens = 0 
 
     def __init__(self):
         ThrowerAnt.__init__(self, 1)
         "*** YOUR CODE HERE ***"
+        self.imposter_queens += 1
 
     def action(self, colony):
         """A queen ant throws a leaf, but also doubles the damange of ants
         behind her.  Impostor queens do only one thing: die."""
         "*** YOUR CODE HERE ***"
+        if self.impostor_queens >1:
+            self.reduce_armor(self.armor)
+        else:
+            cology.queen=QueenPlace(colony.queen,self.place)
+            ThrowerAnt.action(self,colony)
+            the_place=self.place.exit
+            while(the_place != None):
+                if the_place.ant:
+                    if the_place.ant.double_damage !=True:
+                        the_place.ant.damage *= 2
+                        the_place.ant.double_damage=True
+                the_place=the_place.exit
+
+
+class QueenPlace(Place):
+    def __init__(self,original_cology,place_queen):
+        self.original_cology=original_cology
+        self.place_queen=place_queen
+    
+    @property
+    def bees(self):
+        return self.original_colony.bees + self.place_queen.bees
+
 
 class AntRemover(Ant):
     """Allows the player to remove ants from the board in the GUI."""

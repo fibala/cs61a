@@ -259,7 +259,7 @@ def deep_map_rlist(fn, s):
     "*** YOUR CODE HERE ***"
     if s is Rlist.empty:
         return s
-    elif type(s) is not Rlist:
+    elif not isinstance(s,Rlist):
         return fn(s)
     else:
         return Rlist(deep_map_rlist(fn,s.first),deep_map_rlist(fn,s.rest))

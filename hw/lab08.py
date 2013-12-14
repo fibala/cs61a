@@ -18,6 +18,8 @@ class Rlist(object):
         "*** YOUR CODE HERE ***"
         if index==0:
             return self.first
+        elif self.rest is Rlist.empty:
+            print('Index out of bounds')
         else:
             return self.rest.__getitem__(index-1)
 
@@ -39,22 +41,31 @@ def rlist_to_list(rlist):
     []
     """
     "*** YOUR CODE HERE ***"
+    save_list=[]
+    while rlist is not Rlist.empty:
+        save_list.append(rlist.first)
+        rlist=rlist.rest
+    return save_list
 
 def insert(rlist, value, index):
-    if index == 0:
-        rlist.rest = Rlist(rlist.first, rlist.rest)
-        rlist.first = value
+    """Insert VALUE into the the RLIST at the given INDEX.
+
+    >>> rlist = Rlist(1, Rlist(2, Rlist(3)))
+    >>> insert(rlist, 9001, 0)
+    >>> rlist
+    Rlist(9001, Rlist(1, Rlist(2, Rlist(3))))
+    >>> insert(rlist, 100, 2)
+    >>> rlist
+    Rlist(9001, Rlist(1, Rlist(100, Rlist(2, Rlist(3)))))
+    """
+    "*** YOUR CODE HERE ***"
+    if index==0:
+        rlist.rest=Rlist(rlist.first,rlist.rest)
+        rlist.first=value
     elif rlist.rest is Rlist.empty:
         print('Index out of bounds')
     else:
-        insert(rlist.rest, value, index-1)
-
-def reverse_rec(rlist):
-    if rlist.rest is not Rlist.empty:
-        second, last = rlist.rest, rlist
-        rlist = reverse_rec(second)
-        second.rest, last.rest = last, Rlist.empty
-    return rlist
+        return insert(rlist.rest,value,index-1)
 
 def reverse(rlist):
     """Returns an Rlist that is the reverse of the original.
@@ -67,11 +78,13 @@ def reverse(rlist):
     >>> reverse(Rlist(1))
     Rlist(1)
     """
-    new = Rlist(rlist.first)
+    "*** YOUR CODE HERE ***"
+    temp=Rlist(rlist.first)
     while rlist.rest is not Rlist.empty:
-        new = Rlist(rlist.rest.first, new)
-        rlist = rlist.rest
-    return new
+        temp=Rlist(rlist.rest.first,temp)
+        rlist=rlist.rest
+    return temp
+
 
 def type_tag(x):
     return type_tag.tags[type(x)]
@@ -100,35 +113,30 @@ def extend(seq1, seq2):
     [1, 2, 3, 4, 5, 6, 7, 8, 9]
     """
     "*** YOUR CODE HERE ***"
+    types=(type_tag(seq1), type_tag(seq2))
+    return extend.impl[types](seq1,seq2)
 
+def ex_Rlist_list(rlist1,list2):
+    if list2==[]:
+        return
+    elif rlist1.rest is Rlist.empty:
+        rlist1.rest=Rlist(list2[0])
+        list2=list2[1:]
+    ex_Rlist_list(rlist1.rest,list2)
 
-def list_to_rlist(lst):
-    if len(lst) == 0:
-        return Rlist.empty
-    return Rlist(lst.pop(0), list_to_rlist(lst))
-
-def extend_list_list(lst1, lst2):
-    lst1.extend(lst2)
-
-def extend_list_rlist(lst, rlist):
-    return lst.extend(rlist_to_list(rlist))
-
-def extend_rlist_rlist(rlist1, rlist2):
+def ex_Rlist_Rlist(rlist1,rlist2):
     if rlist1.rest is Rlist.empty:
-        rlist1.rest = rlist2
+        rlist1.rest=rlist2
     else:
-        extend_rlist_rlist(rlist1.rest, rlist2)
-
-def extend_rlist_list(rlist, lst):
-    l = list_to_rlist(lst)
-    extend_rlist_rlist(rlist, l)
+        ex_Rlist_Rlist(rlist.rest,rlist2)
 
 extend.impl = {
-  ('list', 'list')   : extend_list_list,
-  ('list', 'Rlist')  : extend_list_rlist,
-  ('Rlist', 'list')  : extend_rlist_list,
-  ('Rlist', 'Rlist') : extend_rlist_rlist,
-}
+  ('list', 'list')   : lambda list1,list2: list1.extend(list2),
+  ('list', 'Rlist')  : lambda list1,rlist2: list1.extend(rlist_to_list(rlist2)), 
+  ('Rlist', 'list')  : ex_Rlist_list, 
+  ('Rlist', 'Rlist') : ex_Rlist_Rlist, 
+}    
+
 
 if __name__ == '__main__':
     from doctest import run_docstring_examples
